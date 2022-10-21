@@ -2,7 +2,7 @@ from AlgorithmImports import *
 import decimal as d
 from datetime import timedelta
 
-class Crossover(QCAlgorithm):
+class OptimalMovingAverage(QCAlgorithm):
     
     def Initialize(self):
 
@@ -13,29 +13,27 @@ class Crossover(QCAlgorithm):
         self.SetStartDate(2022, 1, 1)    #Set Start Date
         # self.SetEndDate(2022, 10, 31)  #Set End Date
         self.SetCash(100000)             #Set Strategy Cash
-        self.symbol = 'DRV'
-        self.ind_length = int(self.GetParameter('ind_length'), 50)
-        # self.ind_type = int(self.GetParameter('ind_type', 1))  # 1=sma, 2=ema, 3=vwap
-        self.ind_type = 4
-        self.direction = 'short'
+        self.symbol = 'SPY'
+        self.ind_length = int(self.GetParameter('ind_length', 50))
+        self.ind_type = int(self.GetParameter('ind_type', 1))  # 1=sma, 2=ema, 3=vwap, 4=atr
+        self.direction = 'long'
+
+         # 0 to turn off
         self.take_profit_percent = 0.05
+
         self.long_signal = False
         self.short_signal = False
 
         # reversal
         if self.algo == 2: 
-            # 0 = nearby
-            # 1 = crossby
+            # 0 = nearby (early entry)
+            # 1 = crossby (late entry)
             self.approach = 0
             self.threshold = 0.02
         
         # atr
         if self.ind_type == 4:
             self.atr_mult = float(self.GetParameter('atr_mult', 2))
-
-        # self.direction = self.GetParameter('direction', 'both') # long, short, both
-        # self.ind_type_str = self.GetParameter('ind_type', 1) # 1=sma, 2=ema, 3=vwap
-        # self.take_profit_percent = float(self.GetParameter('take_profit_percent', 0.25)) # 0 for turning this off
 
         self.AddSecurity(SecurityType.Equity, self.symbol, Resolution.Hour)        
         
@@ -66,8 +64,8 @@ class Crossover(QCAlgorithm):
             self.prev_ind = self.ind.Current.Value
             return
 
-        self.Plot("Crossover", self.ind_type_str, self.ind.Current)
-        self.Plot("Crossover", "price", data[self.symbol].Close)
+        self.Plot("OptimalMovingAverage", self.ind_type_str, self.ind.Current)
+        self.Plot("OptimalMovingAverage", "price", data[self.symbol].Close)
    
         holdings = self.Portfolio[self.symbol].Quantity
 

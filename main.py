@@ -8,7 +8,6 @@ class Crossover(QCAlgorithm):
 
         # 1 = continuation
         # 2 = reversal
-        # 3 = atr sl
         self.algo = 1
 
         self.SetStartDate(2022, 1, 1)    #Set Start Date
